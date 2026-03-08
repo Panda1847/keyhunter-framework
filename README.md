@@ -1,6 +1,6 @@
 # KeyHunter Framework
 
-![KeyHunter Framework Banner](/home/ubuntu/keyhunter-framework/github_banner.png)
+![KeyHunter Framework Banner](github_banner.png)
 
 ## Advanced API Key Discovery & Intelligence
 
@@ -38,13 +38,13 @@ KeyHunter Framework is equipped to identify API keys for a wide array of service
 
 The KeyHunter Framework is designed with a modular and scalable architecture, as illustrated below:
 
-![KeyHunter Framework Architecture Diagram](/home/ubuntu/keyhunter-framework/architecture_diagram.png)
+![KeyHunter Framework Architecture Diagram](architecture_diagram.png)
 
 ### Data Flow
 
 The data flow within the KeyHunter Framework ensures efficient and robust API key discovery:
 
-![KeyHunter Framework Data Flow Diagram](/home/ubuntu/keyhunter-framework/data_flow_diagram.png)
+![KeyHunter Framework Data Flow Diagram](data_flow_diagram.png)
 
 ## Installation
 
@@ -53,6 +53,29 @@ For detailed installation instructions, please refer to [INSTALL.md](INSTALL.md)
 ## Usage
 
 For comprehensive usage guidelines and examples, please refer to [USAGE.md](USAGE.md).
+
+### Quick Start
+
+1.  **Clone the repository**:
+    ```bash
+    git clone https://github.com/Panda1847/keyhunter-framework.git
+    cd keyhunter-framework
+    ```
+2.  **Run the installer**:
+    ```bash
+    chmod +x hybrid_scraper/install.sh
+    sudo ./hybrid_scraper/install.sh
+    ```
+3.  **Activate virtual environment and run a scan**:
+    ```bash
+    source venv/bin/activate
+    python3 hybrid_scraper/main.py --urls https://example.com --depth 2
+    ```
+    For dynamic crawling:
+    ```bash
+    source venv/bin/activate
+    python3 hybrid_scraper/main.py --urls https://dynamic-app.com --dynamic
+    ```
 
 ## Security
 

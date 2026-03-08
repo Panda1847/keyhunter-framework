@@ -1,4 +1,5 @@
 import asyncio
+import aiohttp
 from curl_cffi import requests
 import nodriver as nd
 from loguru import logger
@@ -31,7 +32,9 @@ class CrawlerEngine:
                 content = response.text
                 found_keys = self.key_hunter.hunt(content)
                 for key_info in found_keys:
-                    logger.success(f"Found valid {key_info['service']} key: {key_info['key']}")
+                    logger.success(f"Discovered potential {key_info['service']} key: {key_info['key']}")
+                    # Perform asynchronous validation
+                    asyncio.create_task(self.key_hunter.validate_key(key_info['service'], key_info['key']))
             else:
                 logger.warning(f"Failed to crawl {url}. Status code: {response.status_code}")
                 if response.status_code in [403, 429]:
@@ -58,7 +61,9 @@ class CrawlerEngine:
             content = await page.get_content()
             found_keys = self.key_hunter.hunt(content)
             for key_info in found_keys:
-                logger.success(f"Found valid {key_info['service']} key: {key_info['key']}")
+                logger.success(f"Discovered potential {key_info['service']} key: {key_info['key']}")
+                # Perform asynchronous validation
+                asyncio.create_task(self.key_hunter.validate_key(key_info['service'], key_info['key']))
             
             await browser.stop()
         except Exception as e:

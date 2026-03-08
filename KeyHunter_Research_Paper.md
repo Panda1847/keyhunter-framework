@@ -24,7 +24,7 @@ Existing tools often lack the sophistication required to bypass modern anti-bot 
 
 The KeyHunter Framework is built upon a modular and extensible architecture, designed for efficiency and adaptability. The core components and their interactions are depicted in Figure 1.
 
-![KeyHunter Framework Architecture Diagram](/home/ubuntu/keyhunter-framework/architecture_diagram.png)
+![KeyHunter Framework Architecture Diagram](architecture_diagram.png)
 
 **Figure 1: KeyHunter Framework Architecture**
 
@@ -40,7 +40,7 @@ The KeyHunter Framework is built upon a modular and extensible architecture, des
 
 The operational data flow within the KeyHunter Framework is illustrated in Figure 2, highlighting the sequence of operations from initial input to final reporting.
 
-![KeyHunter Framework Data Flow Diagram](/home/ubuntu/keyhunter-framework/data_flow_diagram.png)
+![KeyHunter Framework Data Flow Diagram](data_flow_diagram.png)
 
 **Figure 2: KeyHunter Framework Data Flow**
 
@@ -84,13 +84,13 @@ The validation process, while currently a placeholder, is designed to integrate 
 
 To demonstrate the efficacy of the KeyHunter Framework, we present example outputs from its operation. Figure 3 shows a typical command-line interface (CLI) output during a scan, highlighting successful API key discoveries.
 
-![KeyHunter CLI Output](/home/ubuntu/keyhunter-framework/screenshot_cli.png)
+![KeyHunter CLI Output](screenshot_cli.png)
 
 **Figure 3: KeyHunter CLI Output showing discovered API keys**
 
 For more advanced deployments, the framework's data can be visualized through a conceptual dashboard, as illustrated in Figure 4. This dashboard provides a holistic view of the scanning process, including proxy distribution and key statistics.
 
-![KeyHunter Dashboard Visualization](/home/ubuntu/keyhunter-framework/screenshot_dashboard.png)
+![KeyHunter Dashboard Visualization](screenshot_dashboard.png)
 
 **Figure 4: Conceptual KeyHunter Dashboard Visualization**
 

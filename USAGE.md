@@ -1,6 +1,6 @@
 # Usage Guide for KeyHunter Framework
 
-This guide provides detailed instructions on how to effectively use the KeyHunter Framework for API key discovery. Ensure you have completed the [installation steps](INSTALL.md) before proceeding.
+This guide provides detailed instructions on how to effectively use the KeyHunter Framework for API key discovery and intelligence. Ensure you have completed the [installation steps](INSTALL.md) before proceeding.
 
 ## Activating the Virtual Environment
 
@@ -30,18 +30,28 @@ python3 main.py --urls https://dynamic-app.com --dynamic
 
 **Note**: Dynamic crawling is generally slower and more resource-intensive than static crawling due to the overhead of launching a headless browser.
 
+## Crawl Depth
+
+Control the depth of the crawl using the `--depth` argument. This specifies how many layers deep the crawler should follow links from the initial URLs. The default depth is 1 (only the initial URLs are crawled).
+
+```bash
+python3 main.py --urls https://example.com --depth 2
+```
+
 ## Interpreting Results
 
-KeyHunter logs its findings directly to the console using `loguru`. Successful API key discoveries will be highlighted with `SUCCESS` messages, indicating the service and the discovered key.
+KeyHunter logs its findings directly to the console using `loguru`. Potential API key discoveries will be noted, and if validation is implemented for a specific service, the validation result will also be displayed.
 
 ```
-[INFO] Initializing Hybrid Scraper...
+[INFO] Initializing KeyHunter Framework...
 [INFO] Fetching fresh proxies from sources...
 [INFO] Fetched 150 potential proxies.
 [INFO] Rotated to new proxy: 192.168.1.1:8080
-[INFO] Starting crawl on 1 URLs...
+[INFO] Starting crawl on 1 URLs with depth 1...
 [INFO] Crawling static page: https://example.com using proxy: http://192.168.1.1:8080
-[SUCCESS] Found valid Tavily AI key: tvly-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+[SUCCESS] Discovered potential Tavily AI key: tvly-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+[INFO] Validating Shodan key: xxxxxxxx...
+[SUCCESS] Confirmed VALID Shodan key: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 [INFO] Crawl completed.
 ```
 
