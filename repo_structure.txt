@@ -1,0 +1,24 @@
+keyhunter-framework/
+│
+├── README.md
+├── INSTALL.md
+├── USAGE.md
+├── SECURITY.md
+├── KeyHunter_Research_Paper.pdf
+├── architecture_diagram.png
+├── data_flow_diagram.png
+├── github_banner.png
+├── logo.png
+├── screenshot_cli.png
+├── screenshot_dashboard.png
+├── EXAMPLE_SCAN_RESULTS.md
+├── requirements.txt
+└── hybrid_scraper/
+    ├── __init__.py
+    ├── main.py
+    ├── install.sh
+    └── modules/
+        ├── __init__.py
+        ├── proxy_manager.py
+        ├── key_hunter.py
+        └── crawler_engine.py
