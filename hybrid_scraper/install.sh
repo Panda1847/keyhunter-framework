@@ -1,14 +1,13 @@
 #!/bin/bash
-
 # KeyHunter Framework Installer for Kali Linux
 # Optimized for professional cybersecurity research environments
-
 set -e
 
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
+# Define colors using tput for better compatibility
+RED=$(tput setaf 1)
+GREEN=$(tput setaf 2)
+BLUE=$(tput setaf 4)
+NC=$(tput sgr0) # No Color
 
 echo -e "${BLUE}[*] Initializing KeyHunter Framework Installation...${NC}"
 
@@ -22,7 +21,14 @@ echo -e "${BLUE}[*] Updating system package lists...${NC}"
 apt update -y
 
 echo -e "${BLUE}[*] Installing system dependencies...${NC}"
-apt install -y python3-pip python3-venv git curl libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 libxkbcommon0 libxcomposite1 libxdamage1 libxrandr2 libgbm1 libasound2 libpango-1.0-0 libcairo2
+# Install python3-venv if not already installed
+if ! dpkg -s python3-venv >/dev/null 2>&1; then
+    echo -e "${BLUE}[*] Installing python3-venv...${NC}"
+    apt install -y python3-venv
+fi
+
+# Removed libatk1.0-0, libatk-bridge2.0-0, libcups2, libasound2 as they are causing issues or are not directly needed for the core functionality
+apt install -y python3-pip git curl libnss3 libdrm2 libxkbcommon0 libxcomposite1 libxdamage1 libxrandr2 libgbm1 libpango-1.0-0 libcairo2
 
 # Setup working directory
 INSTALL_DIR=$(pwd)
