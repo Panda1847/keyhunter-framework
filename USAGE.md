@@ -1,96 +1,46 @@
-# Usage Guide for KeyHunter Framework
+# Usage Guide: KeyHunter Framework
 
-This guide provides detailed instructions on how to effectively use the KeyHunter Framework for API key discovery and intelligence. Ensure you have completed the [installation steps](INSTALL.md) before proceeding.
-
-## Activating the Virtual Environment
-
-Always activate the Python virtual environment before running KeyHunter to ensure all dependencies are correctly loaded:
+## Basic Command
+The framework is designed to be simple yet powerful. The primary entry point is the root-level `main.py`.
 
 ```bash
-source venv/bin/activate
+python3 main.py --urls https://target.com
 ```
 
-## Basic Usage: Static Crawling
-
-To perform a basic static crawl on one or more URLs, use the `main.py` script with the `--urls` argument. This mode uses `curl_cffi` for fast and efficient content retrieval without full browser rendering.
+## Advanced Crawling
+To explore deeper into a domain, use the `--depth` flag. KeyHunter will extract internal links and follow them recursively.
 
 ```bash
-python3 main.py --urls https://example.com https://api.example.org/docs
+python3 main.py --urls https://target.com --depth 3
 ```
 
-Replace `https://example.com` and `https://api.example.org/docs` with your target URLs.
-
-## Advanced Usage: Dynamic Crawling
-
-For websites that heavily rely on JavaScript to render content (e.g., Single Page Applications), enable dynamic crawling using the `--dynamic` flag. This mode utilizes `nodriver` for headless browser automation, allowing KeyHunter to execute JavaScript and interact with dynamic elements.
+## Dynamic Content
+For Single Page Applications (SPAs) or sites that require JavaScript to render, use the `--dynamic` flag.
 
 ```bash
-python3 main.py --urls https://dynamic-app.com --dynamic
+python3 main.py --urls https://spa-target.com --dynamic
 ```
 
-**Note**: Dynamic crawling is generally slower and more resource-intensive than static crawling due to the overhead of launching a headless browser.
-
-## Crawl Depth
-
-Control the depth of the crawl using the `--depth` argument. This specifies how many layers deep the crawler should follow links from the initial URLs. The default depth is 1 (only the initial URLs are crawled).
+## Concurrency and Performance
+You can adjust the number of concurrent crawl tasks to speed up the process.
 
 ```bash
-python3 main.py --urls https://example.com --depth 2
+python3 main.py --urls https://target.com --concurrency 10
 ```
 
-## Interpreting Results
+## Troubleshooting Proxies
+If you are experiencing network issues or want to run a scan from your own IP, use `--no-proxy`.
 
-KeyHunter logs its findings directly to the console using `loguru`. Potential API key discoveries will be noted, and if validation is implemented for a specific service, the validation result will also be displayed.
-
-```
-[INFO] Initializing KeyHunter Framework...
-[INFO] Fetching fresh proxies from sources...
-[INFO] Fetched 150 potential proxies.
-[INFO] Rotated to new proxy: 192.168.1.1:8080
-[INFO] Starting crawl on 1 URLs with depth 1...
-[INFO] Crawling static page: https://example.com using proxy: http://192.168.1.1:8080
-[SUCCESS] Discovered potential Tavily AI key: tvly-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-[INFO] Validating Shodan key: xxxxxxxx...
-[SUCCESS] Confirmed VALID Shodan key: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-[INFO] Crawl completed.
+```bash
+python3 main.py --urls https://target.com --no-proxy
 ```
 
-### KeyHunter Output Fields
+## Example Output
+KeyHunter uses professional logging to display results in real-time:
 
-| Field | Description |
-|---|---|
-| `service` | The identified service associated with the API key (e.g., Tavily AI, Shodan, Google Gemini). |
-| `key` | The discovered API key string. |
-
-## Proxy Management
-
-KeyHunter automatically manages proxy rotation to enhance stealth and bypass rate limiting. If a proxy fails or reaches its request limit, the system will automatically rotate to a new one. You do not need to configure proxies manually.
-
-## Customizing API Key Patterns
-
-To extend KeyHunter's capabilities or refine existing patterns, you can modify the `patterns` dictionary within `modules/key_hunter.py`. Each entry consists of a service name and a regular expression.
-
-**Example**: Adding a new service pattern
-
-```python
-# modules/key_hunter.py
-
-class KeyHunter:
-    def __init__(self):
-        self.patterns = {
-            # ... existing patterns ...
-            "NewService API": r"ns-[a-zA-Z0-9]{40}",
-        }
+```text
+2026-05-26 10:00:00 | INFO     | Initializing KeyHunter Framework...
+2026-05-26 10:00:01 | INFO     | [Depth 1] Crawling static: https://target.com
+2026-05-26 10:00:02 | SUCCESS  | Found Shodan key on https://target.com: abc...123
+2026-05-26 10:00:02 | SUCCESS  | VALID Shodan Key: abc...123
 ```
-
-After modifying, save the file and run KeyHunter as usual. Your new patterns will be automatically included in the scanning process.
-
-## Troubleshooting
-
-Refer to the [INSTALL.md](INSTALL.md) for common installation issues. For usage-specific problems, consider:
-
-*   **Network Connectivity**: Ensure your machine has internet access, especially for proxy fetching and target website access.
-*   **Target Website Changes**: Websites frequently update their structure. If KeyHunter fails to find keys on a previously working target, the website's HTML/JS structure might have changed, requiring pattern adjustments or dynamic crawling.
-*   **Log Analysis**: Review the `loguru` output for `ERROR` or `WARNING` messages, which can provide clues about issues during crawling or key discovery.
-
-For further assistance, please open an issue on the [KeyHunter Framework GitHub Issues](https://github.com/Panda1847/keyhunter-framework/issues) page.

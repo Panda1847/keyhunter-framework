@@ -1,67 +1,71 @@
 import re
 import asyncio
 import aiohttp
+from typing import List, Dict, Any
 from loguru import logger
 
 class KeyHunter:
     def __init__(self):
+        # Professional regex patterns for common services
+        # Patterns are ordered and refined to minimize false positives
         self.patterns = {
-            "Tavily AI": r"tvly-[a-zA-Z0-9]{32}",
-            "Shodan": r"[a-zA-Z0-9]{32}",
-            "FullContact": r"[a-zA-Z0-9]{16}",
-            "Censys API": r"[a-zA-Z0-9]{32}",
-            "BinaryEdge API": r"[a-zA-Z0-9]{32}",
-            "GreyNoise API": r"[a-zA-Z0-9]{32}",
-            "IBM X-Force API": r"[a-zA-Z0-9]{32}",
-            "Twilio SID": r"AC[a-z0-9]{32}",
-            "Twilio Token": r"[a-f0-9]{32}",
-            "Hunter.io": r"[a-zA-Z0-9]{40}",
-            "Google Gemini": r"AIza[0-9A-Za-z-_]{35}",
-            "Claude": r"sk-ant-api03-[a-zA-Z0-9-_]{93}",
-            "Grok": r"xai-[a-zA-Z0-9]{48}",
-            "Slack Token": r"xox[baprs]-[0-9a-zA-Z]{10,48}",
-            "AWS Access Key": r"AKIA[0-9A-Z]{16}",
-            "GitHub Token": r"gh[pousr]_[a-zA-Z0-9]{36}",
-            "Generic API Key": r"(?:api_key|apikey|secret|token|auth_token)[\"']?\s*[:=]\s*[\"']?([a-zA-Z0-9-_]{16,64})[\"']?"
+            "Tavily AI": r"\btvly-[a-zA-Z0-9]{32}\b",
+            "Google Gemini": r"\bAIza[0-9A-Za-z-_]{35}\b",
+            "Claude": r"\bsk-ant-api03-[a-zA-Z0-9-_]{93}\b",
+            "Grok": r"\bxai-[a-zA-Z0-9]{48}\b",
+            "Slack Token": r"\bxox[baprs]-[0-9a-zA-Z]{10,48}\b",
+            "AWS Access Key": r"\bAKIA[0-9A-Z]{16}\b",
+            "GitHub Token": r"\bgh[pousr]_[a-zA-Z0-9]{36}\b",
+            "Twilio SID": r"\bAC[a-z0-9]{32}\b",
+            "Twilio Token": r"\b[a-f0-9]{32}\b",
+            "Hunter.io": r"\b[a-zA-Z0-9]{40}\b",
+            "Shodan": r"\b[a-zA-Z0-9]{32}\b",
+            "FullContact": r"\b[a-zA-Z0-9]{16}\b",
+            "Censys API": r"\b[a-zA-Z0-9]{32}\b",
+            "BinaryEdge API": r"\b[a-zA-Z0-9]{32}\b",
+            "GreyNoise API": r"\b[a-zA-Z0-9]{32}\b",
+            "IBM X-Force API": r"\b[a-zA-Z0-9]{32}\b",
+            "Generic Secret": r"(?:api_key|apikey|secret|token|auth_token)[\"']?\s*[:=]\s*[\"']?([a-zA-Z0-9-_]{16,64})[\"']?"
         }
 
-    def hunt(self, content):
+    def hunt(self, content: str) -> List[Dict[str, str]]:
+        """Scan content for potential API keys using regex patterns."""
         found_keys = []
+        seen_keys = set()
+
         for service, pattern in self.patterns.items():
             matches = re.findall(pattern, content)
             for match in matches:
+                # Handle capture groups in generic pattern
                 if isinstance(match, tuple):
                     match = match[0]
-                # Avoid duplicates
-                if not any(k['key'] == match for k in found_keys):
+                
+                # Deduplicate and avoid overlaps (prefer specific patterns)
+                if match not in seen_keys:
                     found_keys.append({"service": service, "key": match})
+                    seen_keys.add(match)
         
-        if found_keys:
-            logger.info(f"Found {len(found_keys)} potential API keys.")
         return found_keys
 
-    async def validate_key(self, service, key):
-        """
-        Asynchronously validate the discovered key.
-        Currently implements validation for Shodan as an example.
-        """
-        logger.info(f"Validating {service} key: {key[:8]}...")
-        
+    async def validate_key(self, service: str, key: str) -> bool:
+        """Asynchronously validate the discovered key."""
         if service == "Shodan":
-            url = f"https://api.shodan.io/api-info?key={key}"
-            try:
-                async with aiohttp.ClientSession() as session:
-                    async with session.get(url, timeout=10) as response:
-                        if response.status == 200:
-                            logger.success(f"Confirmed VALID Shodan key: {key}")
-                            return True
-                        else:
-                            logger.warning(f"Invalid Shodan key (Status: {response.status})")
-                            return False
-            except Exception as e:
-                logger.error(f"Error validating Shodan key: {e}")
-                return False
+            return await self._validate_shodan(key)
         
-        # Default behavior for other services (placeholder)
-        # In production, add validation logic for each service here.
+        # Default: just log the discovery if no validator is implemented
         return True
+
+    async def _validate_shodan(self, key: str) -> bool:
+        url = f"https://api.shodan.io/api-info?key={key}"
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url, timeout=10) as response:
+                    if response.status == 200:
+                        logger.success(f"VALID Shodan Key: {key}")
+                        return True
+                    else:
+                        logger.debug(f"Invalid Shodan Key: {key}")
+                        return False
+        except Exception as e:
+            logger.error(f"Shodan validation error: {e}")
+            return False

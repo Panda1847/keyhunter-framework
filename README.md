@@ -4,57 +4,18 @@
 
 ## Advanced API Key Discovery & Intelligence
 
-[![License](https://img.shields.io/github/license/Panda1847/keyhunter-framework?style=flat-square)](LICENSE)
-[![Stars](https://img.shields.io/github/stars/Panda1847/keyhunter-framework?style=flat-square)](https://github.com/Panda1847/keyhunter-framework/stargazers)
-[![Forks](https://img.shields.io/github/forks/Panda1847/keyhunter-framework?style=flat-square)](https://github.com/Panda1847/keyhunter-framework/network/members)
-[![Issues](https://img.shields.io/github/issues/Panda1847/keyhunter-framework?style=flat-square)](https://github.com/Panda1847/keyhunter-framework/issues)
-[![Pull Requests](https://img.shields.io/github/issues-pr/Panda1847/keyhunter-framework?style=flat-square)](https://github.com/Panda1847/keyhunter-framework/pulls)
-
-## Overview
-
-The **KeyHunter Framework** is a professional-grade, open-source cybersecurity research tool designed for comprehensive API key discovery and intelligence gathering. It leverages advanced web scraping and crawling techniques, coupled with sophisticated anti-detection mechanisms, to identify and validate API keys across various online platforms. Built with a focus on ethical hacking and authorized security testing, KeyHunter provides a robust solution for researchers and security professionals to uncover potential vulnerabilities related to exposed API credentials.
+The **KeyHunter Framework** is a professional-grade, open-source cybersecurity research tool designed for comprehensive API key discovery and intelligence gathering. It leverages advanced web scraping and crawling techniques, coupled with sophisticated anti-detection mechanisms, to identify and validate API keys across various online platforms.
 
 ## Features
 
-*   **Anti-Detection Engine**: Employs `curl_cffi` for TLS fingerprint spoofing and `nodriver` for CDP-free browser automation, ensuring stealthy operations against modern web defenses.
-*   **Intelligent Proxy Manager**: Dynamically fetches and rotates proxies from multiple sources, minimizing the risk of IP blacklisting and enhancing operational resilience.
-*   **Hybrid Crawler**: Supports both static and dynamic crawling methodologies to ensure thorough coverage of target websites, adapting to various web technologies.
-*   **API Key Hunter**: Utilizes a comprehensive library of regex patterns to accurately identify potential API keys for over 20 popular services, including OSINT, AI, and telecom intelligence platforms.
-*   **Asynchronous Validation**: Efficiently validates discovered API keys asynchronously, maintaining high performance and providing rapid feedback on key authenticity.
+*   **Hybrid Crawler Engine**: Supports both static (fast) and dynamic (JavaScript-heavy) crawling methodologies.
+*   **Recursive Discovery**: Automatically follows internal links to discover keys hidden deep within web applications.
+*   **Anti-Detection**: TLS fingerprint spoofing via `curl_cffi` and CDP-free browser automation via `nodriver`.
+*   **Smart Proxy Management**: Automatic fetching and rotation of proxies from multiple public sources.
+*   **Extensive Service Support**: Pre-configured patterns for Tavily, Shodan, Gemini, Claude, AWS, GitHub, and more.
+*   **Asynchronous Validation**: Validates discovered keys in the background without slowing down the crawl.
 
-## Supported Services
-
-KeyHunter Framework is equipped to identify API keys for a wide array of services, including but not limited to:
-
-| Category | Services |
-|---|---|
-| **AI/ML** | Tavily AI, Google Gemini, Claude, Grok |
-| **OSINT/Security** | Shodan, Censys API, BinaryEdge API, GreyNoise API, IBM X-Force API |
-| **Communication** | Twilio |
-| **Email Verification** | Hunter.io |
-| **General** | Generic API Key patterns |
-
-## Architecture
-
-The KeyHunter Framework is designed with a modular and scalable architecture, as illustrated below:
-
-![KeyHunter Framework Architecture Diagram](architecture_diagram.png)
-
-### Data Flow
-
-The data flow within the KeyHunter Framework ensures efficient and robust API key discovery:
-
-![KeyHunter Framework Data Flow Diagram](data_flow_diagram.png)
-
-## Installation
-
-For detailed installation instructions, please refer to [INSTALL.md](INSTALL.md).
-
-## Usage
-
-For comprehensive usage guidelines and examples, please refer to [USAGE.md](USAGE.md).
-
-### Quick Start
+## Quick Start
 
 1.  **Clone the repository**:
     ```bash
@@ -66,21 +27,35 @@ For comprehensive usage guidelines and examples, please refer to [USAGE.md](USAG
     chmod +x hybrid_scraper/install.sh
     sudo ./hybrid_scraper/install.sh
     ```
-3.  **Activate virtual environment and run a scan**:
+3.  **Run a scan**:
     ```bash
     source venv/bin/activate
-    python3 hybrid_scraper/main.py --urls https://example.com --depth 2
-    ```
-    For dynamic crawling:
-    ```bash
-    source venv/bin/activate
-    python3 hybrid_scraper/main.py --urls https://dynamic-app.com --dynamic
+    python3 main.py --urls https://example.com --depth 2
     ```
 
-## Security
+## Usage Options
 
-For information regarding security practices and responsible disclosure, please refer to [SECURITY.md](SECURITY.md).
+| Argument | Description |
+|---|---|
+| `--urls` | Starting URLs for crawling (space-separated) |
+| `--depth` | Crawl depth (default: 1) |
+| `--dynamic` | Enable dynamic crawling using headless browser |
+| `--concurrency` | Number of concurrent crawl tasks (default: 5) |
+| `--no-proxy` | Disable proxy rotation for local testing or authorized scans |
+
+## Architecture
+
+```mermaid
+graph LR
+    A[User/CLI] --> B(main.py)
+    B --> C{CrawlerEngine}
+    C --> D[ProxyManager]
+    C --> E[KeyHunter]
+    D -- Rotates --> F(Proxies)
+    C -- Static/Dynamic --> G(Targets)
+    E -- Scans/Validates --> G
+```
 
 ## Disclaimer
 
-This tool is provided for **educational and authorized security testing purposes only**. Unauthorized use of this tool against targets without explicit permission is strictly prohibited and may be illegal and unethical. The developers are not responsible for any misuse or damage caused by this software. Always ensure you have proper authorization before conducting any scanning or crawling activities.
+This tool is provided for **educational and authorized security testing purposes only**. Unauthorized use against targets without explicit permission is strictly prohibited. The developers are not responsible for any misuse.
